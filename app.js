@@ -28,6 +28,12 @@ app.get(`/api/v1/tours/:id`, (req, res) => {
   res.status(200).json({ status: 'success', data: { tour: tours.find((tour) => tour.id === id) } });
 });
 
+app.patch('/api/v1/tours/:id', (req, res) => {
+  const id = Number(req.params.id);
+  if (!tours.some((tour) => tour.id === id)) res.status(404).json({ status: 'fail', message: 'invalid id' });
+  res.status(200).json({ status: 'success', data: { tour: '<Updated tour here ...>' } });
+});
+
 app.post('/api/v1/tours', (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
