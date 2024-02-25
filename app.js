@@ -2,7 +2,18 @@ const express = require('express');
 const fs = require('fs');
 
 const app = express();
+// middleware
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log('Hello from the middleware🐱‍👓🐱‍👓🐱‍👓');
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  console.log(req.requestTime);
+  next();
+});
 
 const port = '3000';
 const server = '127.0.0.1';
@@ -16,6 +27,7 @@ const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simpl
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'sucsess',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: { tours: tours },
   });
