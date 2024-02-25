@@ -1,13 +1,14 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
-// middleware
+
+////////////////////////////////////////////////////////////////
+// middlewares
 app.use(express.json());
-app.use((req, res, next) => {
-  console.log('Hello from the middleware🐱‍👓🐱‍👓🐱‍👓');
-  next();
-});
+
+app.use(morgan('dev'));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -62,16 +63,33 @@ const deleteTour = (req, res) => {
   res.status(204).json({ status: 'success', data: { tour: null } });
 };
 
+const getAllUsers = (req, res) => {
+  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
+};
+const createUser = (req, res) => {
+  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
+};
+const getUser = (req, res) => {
+  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
+};
+
 ////////////////////////////////////////////////////////////////
 // routes
-// app.get('/api/v1/tours', getAllTours);
-// app.post('/api/v1/tours', postTour);
-app.route('/api/v1/tours').get(getAllTours).post(postTour);
+const tourRouter = express.Router();
+tourRouter.route('/').get(getAllTours).post(postTour);
+tourRouter.route('/:id').get(getTour).patch(patchTour).delete(deleteTour);
+app.use('/api/v1/tours', tourRouter);
 
-// app.get(`/api/v1/tours/:id`, getTour);
-// app.patch('/api/v1/tours/:id', patchTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-app.route('/api/v1/tours/:id').get(getTour).patch(patchTour).delete(deleteTour);
+const userRouter = express.Router();
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+app.use('/api/v1/users', userRouter);
 
 ////////////////////////////////////////////////////////////////
 // starting the server
