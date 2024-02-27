@@ -8,7 +8,7 @@ router.param('id', tourController.checkId);
 
 ////////////////////////////////////////
 // routes
-router.route('/').get(tourController.getAllTours).post(tourController.postTour);
+router.route('/').get(tourController.getAllTours).post(tourController.checkBody, tourController.postTour);
 router.route('/:id').get(tourController.getTour).patch(tourController.patchTour).delete(tourController.deleteTour);
 
 ////////////////////////////////////////
