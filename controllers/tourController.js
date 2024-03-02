@@ -72,11 +72,22 @@ exports.patchTour = async (req, res) => {
       status: 'Bad request',
       message: err.message
     })
-  }
-  
+  } 
 };
 
-exports.deleteTour = (req, res) => {
-  // TODO code to update the tour record by id
-  res.status(204).json({ status: 'success', data: { tour: null } });
+exports.deleteTour = async (req, res) => {
+  try{
+  const deletedObject = await Tour.findByIdAndDelete(req.params.id);
+  res.status(200).json({
+    status: "deleted",
+    data: {
+      deletedObject
+    }
+  })
+  }catch(err){
+  res.status(400).json({
+    status: 'Bad request',
+    message: err.message
+  })
+}
 };
