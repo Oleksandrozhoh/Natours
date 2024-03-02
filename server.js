@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
 
+// load env variables from config file to node.js
 dotenv.config({ path: './config.env' });
 
 // connection to MongoDB
@@ -11,27 +12,6 @@ mongoose.connect(connectionString, {
   useCreateIndex: true, 
   useFindAndModify: false
 }).then(()=>console.log("DB connection successful"));
-
-//creating schema
-const tourSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: [true, "A tour must have a name"],
-    unique: true
-  },
-  rating: {
-    type: Number,
-    default: 4.5
-  },
-  price: {
-    type: Number,
-    require: [true, "A tour must have a price"]
-  }
-})
-const Tour = mongoose.model('Tour', tourSchema);
-
-const testTour = new Tour({name: "My test tour", rating: 5.0, price:500});
-testTour.save().then(doc => {console.log(doc)}).catch(err => console.log("😒😒😒😒",err));
 
 ////////////////////////////////////////////////////////////////
 // starting the server
