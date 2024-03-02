@@ -9,16 +9,37 @@ const Tour = require('../models/tourModel')
 ////////////////////////////////////////
 // route handlers
 exports.getAllTours = async (req, res) => {
-  const allTours = await Tour.find();
-  res.status(200).json({
-    status: "success",
-    data: allTours
-  })
-};
-
-exports.getTour = (req, res) => {
-  const id = Number(req.params.id);
-  // res.status(200).json({ status: 'success', data: { tour: tours.find((tour) => tour.id === id) } });
+  try{
+    const allTours = await Tour.find();
+    res.status(200).json({
+      status: "success",
+      data: {
+        allTours
+      }
+    })
+  }catch(err){
+    res.status(404).json({
+      status: 'Bad request',
+      message: err.message
+    })
+  }
+  };
+  
+exports.getTour = async (req, res) => {
+  try{
+    const tour = await Tour.findById(req.params.id);
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour
+      }
+    })
+  }catch(err){
+    res.status(404).json({
+      status: 'Bad request',
+      message: err.message
+    })
+  }
 };
 
 exports.createTour = async (req, res) => {
@@ -32,16 +53,27 @@ exports.createTour = async (req, res) => {
     })
   }catch(err){
     res.status(400).json({
-      status: 'fail',
+      status: 'Bad request',
       message: err.message
     })
   }
 
   };
 
-exports.patchTour = (req, res) => {
-  // TODO code to update the tour record by id
-  res.status(200).json({ status: 'success', data: { tour: '<Updated tour here ...>' } });
+exports.patchTour = async (req, res) => {
+  try{
+    const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
+    res.status(200).json({
+      status: 'Updated',
+      data: {updatedTour}
+    })
+  }catch(err){
+    res.status(400).json({
+      status: 'Bad request',
+      message: err.message
+    })
+  }
+  
 };
 
 exports.deleteTour = (req, res) => {
