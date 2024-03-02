@@ -1,11 +1,18 @@
 const Tour = require('../models/tourModel');
 
 ////////////////////////////////////////
-// route middleware
-
-////////////////////////////////////////
 // route handlers
+
+exports.aliasTopTours = (req, res, next) => {
+  console.log(req.query);
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
+  console.log(req.query);
   try {
     // filtering
     const queryObj = { ...req.query };
@@ -36,12 +43,12 @@ exports.getAllTours = async (req, res) => {
     }
 
     // pagination
-    const page = req.query.page ? req.query.page : 0;
+    const page = req.query.page ? req.query.page : 1;
     const limit = req.query.limit ? req.query.limit : 10;
-    query.skip(limit * page - limit).limit(Number(limit));
+    query.skip((page - 1) * limit).limit(Number(limit));
     if (req.query.page) {
       const numbOfTours = await Tour.countDocuments();
-      if (limit * page - limit >= numbOfTours) {
+      if ((page - 1) * limit >= numbOfTours) {
         throw new Error('This page does NOT exist');
       }
     }
