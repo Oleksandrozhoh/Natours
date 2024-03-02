@@ -1,4 +1,3 @@
-const fs = require('fs');
 const Tour = require('../models/tourModel')
 
 
@@ -10,9 +9,23 @@ const Tour = require('../models/tourModel')
 // route handlers
 exports.getAllTours = async (req, res) => {
   try{
-    const allTours = await Tour.find();
+    // filtering
+    const queryObj = {...req.query};
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach(field => delete queryObj[field]);
+    // advanced filtering
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    // build query
+    const query = await Tour.find(JSON.parse(queryStr));
+
+    // execution query
+    const allTours = await query;
+
     res.status(200).json({
       status: "success",
+      results: allTours.length,
       data: {
         allTours
       }
