@@ -79,12 +79,12 @@ exports.deleteTour = async (req, res) => {
   try{
   const deletedTour = await Tour.findByIdAndDelete(req.params.id);
 
-     // Check if deletedTour is null (meaning no document was found)
-     if (!deletedTour) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'No tour found with that ID'
-      });
+   // Check if deletedTour is null (meaning no document was found)
+   if (!deletedTour) {
+     return res.status(404).json({
+      status: 'fail',
+      message: 'No tour found with that ID'
+    });
     }
 
   res.status(204).json({
