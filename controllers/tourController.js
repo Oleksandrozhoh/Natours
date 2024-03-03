@@ -15,7 +15,7 @@ exports.aliasTopTours = (req, res, next) => {
 exports.getAllTours = async (req, res) => {
   try {
     // executing query
-    const features = new APIFeatures(Tour.find, req.query);
+    const features = new APIFeatures(Tour.find(), req.query);
     features.filter().sort().limitFields().paginate();
     const allTours = await features.query;
 
@@ -98,6 +98,41 @@ exports.deleteTour = async (req, res) => {
     res.status(204).json({
       status: 'success',
       data: null,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'Bad request',
+      message: err.message,
+    });
+  }
+};
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } }, // select only ratings 4.5 and up
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' }, // group by difficulty
+          averageRating: { $avg: '$ratingsAverage' },
+          numberOfRatings: { $count: {} },
+          averagePrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { averagePrice: 1 },
+      },
+      {
+        $match: { _id: { $ne: 'EASY' } }, // excluding easy
+      },
+    ]);
+    res.status(200).json({
+      status: 'Updated',
+      data: { stats },
     });
   } catch (err) {
     res.status(400).json({
