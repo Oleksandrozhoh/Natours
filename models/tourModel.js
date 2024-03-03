@@ -1,25 +1,26 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 //creating schema
 const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: [true, 'A tour must have a name'],
+      required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
     },
     duration: {
       type: Number,
-      require: [true, 'A tour must have a duration'],
+      required: [true, 'A tour must have a duration'],
     },
     maxGroupSize: {
       type: Number,
-      require: [true, 'A tour must have a group size'],
+      required: [true, 'A tour must have a group size'],
     },
     difficulty: {
       type: String,
-      require: [true, 'A trip must have difficulty'],
+      required: [true, 'A trip must have difficulty'],
     },
     ratingsAverage: {
       type: Number,
@@ -31,7 +32,7 @@ const tourSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      require: [true, 'A tour must have a price'],
+      required: [true, 'A tour must have a price'],
     },
     priceDiscount: Number,
     summary: {
@@ -41,11 +42,11 @@ const tourSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      require: [true, 'A tour must have a description'],
+      required: [true, 'A tour must have a description'],
     },
     imageCover: {
       type: String,
-      require: [true, 'A tour must have image cover'],
+      required: [true, 'A tour must have image cover'],
     },
     images: [String],
     createdAt: {
@@ -54,6 +55,7 @@ const tourSchema = new mongoose.Schema(
       select: false, // hiding the field ( for internal use only )
     },
     startDates: [Date],
+    slug: String,
   },
   {
     toJSON: { virtuals: true },
@@ -63,6 +65,22 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// mongoose midleware
+// document middleware ( save(), create() will trigger the func )
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+tourSchema.pre('save', function (next) {
+  console.log('Saving the document...');
+  next();
+});
+tourSchema.post('save', function (doc, next) {
+  console.log(doc);
+  next();
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
