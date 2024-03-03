@@ -2,7 +2,7 @@
   "name": "natours",
   "version": "1.0.0",
   "description": "Learning node, express and mongoDB",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start:dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
