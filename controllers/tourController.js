@@ -126,12 +126,13 @@ exports.getTourStats = async (req, res) => {
       {
         $sort: { averagePrice: 1 },
       },
-      {
-        $match: { _id: { $ne: 'EASY' } }, // excluding easy
-      },
+      //{
+      // $match: { _id: { $ne: 'EASY' } }, // excluding easy
+      //},
     ]);
     res.status(200).json({
       status: 'Updated',
+      results: stats.length,
       data: { stats },
     });
   } catch (err) {
