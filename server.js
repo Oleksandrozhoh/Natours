@@ -4,16 +4,17 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
-
 // connection to MongoDB
-const connectionString = process.env.DATABASE.replace("<PASSWORD>", process.env.PASSWORD);
+const connectionString = process.env.DATABASE.replace('<PASSWORD>', process.env.PASSWORD);
 
-mongoose.connect(connectionString, {
-  useNewUrlParser: true, 
-  useCreateIndex: true, 
-  useUnifiedTopology: true,
-  useFindAndModify: false
-}).then(()=>console.log("DB connection successful"));
+mongoose
+  .connect(connectionString, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then(() => console.log('DB connection successful'));
 
 ////////////////////////////////////////////////////////////////
 // starting the server
