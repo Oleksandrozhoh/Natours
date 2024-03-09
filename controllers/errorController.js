@@ -35,17 +35,25 @@ const handleCastErrorDB = (err) => {
   return new AppError(errorMessage, 400);
 };
 
+const handleDuplicateFieldsDB = (err) => {
+  const string = err.keyValue.name;
+  const errorMessage = `Duplicate field value: '${string}', please use another value`;
+  return new AppError(errorMessage, 400);
+};
+
 /////////////////////////////////////
 // global error handling function
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+  console.log(err);
 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(res, err);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     if (error.name === 'CastError') error = handleCastErrorDB(error);
+    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     sendErrorProd(res, error);
   }
 };
