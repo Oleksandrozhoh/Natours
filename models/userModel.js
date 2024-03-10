@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,7 +9,6 @@ const userSchema = new mongoose.Schema(
       required: [true, 'A user name must be specified'],
       trim: true,
       maxlength: [40, 'User name length must be less than 40 characters'],
-      minlength: [10, 'User name length must be at least 10 characters'],
     },
     email: {
       type: String,
@@ -28,6 +28,13 @@ const userSchema = new mongoose.Schema(
     passwordConfirm: {
       type: String,
       required: [true, 'PLease confirm a password'],
+      validate: {
+        // only workds for create or save requests
+        validator: function (el) {
+          return this.password === el;
+        },
+        message: 'Passwords do not match',
+      },
     },
   },
   {
@@ -36,6 +43,13 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-const User = new mongoose.Model('User', userSchema);
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
+});
+
+const User = new mongoose.model('User', userSchema);
 
 module.exports = User;
