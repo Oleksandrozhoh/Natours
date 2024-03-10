@@ -8,6 +8,7 @@ const router = express.Router();
 // routes
 // user route
 router.route('/signup').post(authenticationController.signup);
+router.route('/login').post(authenticationController.login);
 // admin route
 router.route('/').get(userController.getAllUsers).post(userController.createUser);
 router.route('/:id').get(userController.getUser).patch(userController.updateUser).delete(userController.deleteUser);
