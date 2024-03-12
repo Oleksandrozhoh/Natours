@@ -47,6 +47,16 @@ const handleValidationErrors = (err) => {
   return new AppError(errorMessage, 400);
 };
 
+const handleJWTErrors = () => {
+  const errorMessage = `Invalid authentication token. Please log in again`;
+  return new AppError(errorMessage, 401);
+};
+
+const handleExpiredTokenErrors = () => {
+  const errorMessage = `Expired authentication token. Please log in again`;
+  return new AppError(errorMessage, 401);
+};
+
 /////////////////////////////////////
 // global error handling function
 module.exports = (err, req, res, next) => {
@@ -60,6 +70,8 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (err.name === 'ValidationError') error = handleValidationErrors(error);
+    if (err.name === 'JsonWebTokenError') error = handleJWTErrors();
+    if (err.name === 'TokenExpiredError') error = handleExpiredTokenErrors();
     sendErrorProd(res, error);
   }
 };
