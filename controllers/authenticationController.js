@@ -44,3 +44,23 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // get the jwt token and check if it exist
+  let token = '';
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  console.log(token);
+
+  if (!token) return next(new AppError('You are not logged in, please log in to get access.', 401));
+
+  // verification token
+
+  // check if user still exists
+
+  // check if user changed password after jwt was issued
+
+  // proceed to the next middleware
+  next();
+});

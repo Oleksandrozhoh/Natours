@@ -119,7 +119,6 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.post(/^find/, function (docs, next) {
   this.executionEndedAt = Date.now();
   console.log(`Query execution took: ${this.executionEndedAt - this.executionStartedAt}`);
-  console.log(docs);
   next();
 });
 
