@@ -14,6 +14,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
 
   const token = createTocken(newUser._id);
@@ -60,10 +61,13 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // check if user still exists
   const freshUser = await User.findById(tokenData.id);
-  if (!freshUser) return next(new AppError('The user bolonging to a token is no longer exist', 401));
+  if (!freshUser) return next(new AppError('The user belonging to provided token is no longer exist', 401));
 
   // check if user changed password after jwt was issued
+  if (freshUser.changePasswordAfter(tokenData.iat))
+    return next(new AppError('Authentication failed due to password change, please log in again'));
 
-  // proceed to the next middleware
+  // proceed to the next middleware (Grant access to protected route)
+  req.user = freshUser;
   next();
 });
