@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const { appendFile } = require('fs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
@@ -8,6 +10,15 @@ const sendEmail = require('../utils/email');
 
 const createTocken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+};
+
+const createSendTocken = (user, statusCode, res) => {
+  const token = createTocken(user._id);
+  res.status(statusCode).json({
+    status: 'success',
+    token: token,
+    data: { user: user },
+  });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
@@ -20,13 +31,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
 
-  const token = createTocken(newUser._id);
-
-  res.status(201).json({
-    status: 'success',
-    token: token,
-    data: { user: newUser },
-  });
+  createSendTocken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -43,11 +48,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Email or password is incorrect'));
 
   // if everything is ok, send jwt back to the client
-  const token = createTocken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendTocken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -135,9 +136,22 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // update changedPasswordAt property
 
   // if everything is ok, send jwt back to the client
-  const token = createTocken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendTocken(user, 200, res);
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // get user from collection
+  const user = await User.findById(req.user.id).select('+password');
+
+  // check if posted password is correct
+  if (!(await user.correctPassword(req.body.password, user.password)))
+    return next(new AppError('Provided current password is not correct, please provide valid password'));
+
+  // update the password
+  user.password = req.body.passwordUpdate;
+  user.passwordConfirm = req.body.passwordUpdateConfirm;
+  await user.save();
+
+  // log the user in (send JWT back to user)
+  createSendTocken(user, 200, res);
 });
