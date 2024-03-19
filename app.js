@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
@@ -10,7 +12,9 @@ const app = express();
 
 ////////////////////////////////////////////////////////////////
 // global middleware
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
+// security HTTP headers
+app.use(helmet());
 
 // set the rate limit
 const limiter = rateLimit({
@@ -20,8 +24,12 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter); // will allow 100 req from the same IP in 1 hour
 
-// will parse req body
+// body parser
 app.use(express.json());
+
+// dev logging
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
 // serves static files from public folder to clients browser
 app.use(express.static(`${__dirname}/public`));
 
