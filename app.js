@@ -25,7 +25,7 @@ const limiter = rateLimit({
 app.use('/api', limiter); // will allow 100 req from the same IP in 1 hour
 
 // body parser
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 
 // dev logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
@@ -33,9 +33,11 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // serves static files from public folder to clients browser
 app.use(express.static(`${__dirname}/public`));
 
+// test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   console.log(req.requestTime);
+  // console.log(req.headers);
   next();
 });
 
