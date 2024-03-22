@@ -1,25 +1,12 @@
 const catchAsync = require('../utils/catchAsync');
 const Review = require('../models/reviewModel');
-const Tour = require('../models/tourModel');
-const AppError = require('../utils/appError');
 
 /////////////////////////////////////////
 // review route handlers
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find();
-  res.status(200).json({
-    status: 'success',
-    results: reviews.length,
-    data: {
-      reviews: reviews,
-    },
-  });
-});
-
-exports.getTourReviews = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findOne({ _id: req.params.tourId });
-  if (!tour) return next(new AppError('Invalid tour Id'), 400);
-  const reviews = await Review.find({ tour: req.params.tourId });
+  let filter;
+  if (req.params.tourId) filter = { tour: req.params.tourId };
+  const reviews = await Review.find(filter);
   res.status(200).json({
     status: 'success',
     results: reviews.length,
