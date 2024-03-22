@@ -1,11 +1,14 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authenticationController = require('../controllers/authenticationController');
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
 // middleware
+
+// nested review route
+router.use('/:tourId/reviews', reviewRouter);
 
 ////////////////////////////////////////
 // routes
@@ -22,11 +25,6 @@ router
     authenticationController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
   );
-
-//
-router
-  .route('/:tourId/reviews')
-  .post(authenticationController.protect, authenticationController.restrictTo('user'), reviewController.createReview);
 
 ////////////////////////////////////////
 // export
