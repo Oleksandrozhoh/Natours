@@ -1,6 +1,6 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
-const factory = require('./HandlerFactory');
+const factory = require('./handlerFactory');
 
 ////////////////////////////////////////
 // route handlers

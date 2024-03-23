@@ -1,4 +1,4 @@
-const factory = require('./HandlerFactory');
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
@@ -15,6 +15,11 @@ const filterObj = (obj, ...allowedFields) => {
 
 ////////////////////////////////////////
 // route handlers
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   // create error if user updating passowrd
   if (req.body.password || req.body.passwordConfirm)

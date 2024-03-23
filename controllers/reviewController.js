@@ -1,5 +1,5 @@
 const Review = require('../models/reviewModel');
-const factory = require('./HandlerFactory');
+const factory = require('./handlerFactory');
 
 /////////////////////////////////////////
 // review route handlers
