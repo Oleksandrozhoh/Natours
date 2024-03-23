@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-// query middleware to run every time before find queryed in order to filter out inactive (deleted) users
+// query middleware to run every time before find query in order to filter out inactive (deleted) users
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
