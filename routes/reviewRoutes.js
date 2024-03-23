@@ -18,6 +18,7 @@ router
 router.route('/').get(authenticationController.protect, reviewController.getAllReviews);
 router
   .route('/:id')
+  .get(authenticationController.protect, reviewController.getReview)
   .delete(authenticationController.protect, reviewController.deleteReview)
   .patch(authenticationController.protect, reviewController.updateReview);
 
