@@ -6,20 +6,18 @@ const router = express.Router({ mergeParams: true });
 
 ////////////////////////////////////////
 // routes
-// user route
+
+// protect all routes from unauthorized users
+router.route(authenticationController.protect);
+
 router
   .route('/createReview')
-  .post(
-    authenticationController.protect,
-    authenticationController.restrictTo('user'),
-    reviewController.setTourAndUserIds,
-    reviewController.createReview,
-  );
-router.route('/').get(authenticationController.protect, reviewController.getAllReviews);
+  .post(authenticationController.restrictTo('user'), reviewController.setTourAndUserIds, reviewController.createReview);
+router.route('/').get(reviewController.getAllReviews);
 router
   .route('/:id')
-  .get(authenticationController.protect, reviewController.getReview)
-  .delete(authenticationController.protect, reviewController.deleteReview)
-  .patch(authenticationController.protect, reviewController.updateReview);
+  .get(reviewController.getReview)
+  .delete(authenticationController.restrictTo('user', 'admin'), reviewController.deleteReview)
+  .patch(authenticationController.restrictTo('user', 'admin'), reviewController.updateReview);
 
 module.exports = router;
