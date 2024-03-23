@@ -2,6 +2,7 @@ const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./HandlerFactory');
 
 ////////////////////////////////////////
 // route handlers
@@ -61,25 +62,7 @@ exports.patchTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const deletedTour = await Tour.findByIdAndDelete(req.params.id);
-  if (!deletedTour) {
-    return next(new AppError('No tour found with this Id', 404));
-  }
-
-  // Check if deletedTour is null (meaning no document was found)
-  if (!deletedTour) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'No tour found with that ID',
-    });
-  }
-
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([

@@ -1,4 +1,4 @@
-const Tour = require('../models/tourModel');
+const factory = require('./HandlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
@@ -58,6 +58,4 @@ exports.getUser = (req, res) => {
 exports.updateUser = (req, res) => {
   res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
 };
-exports.deleteUser = (req, res) => {
-  res.status(500).json({ status: 'error', message: 'This route is NOT defined yet' });
-};
+exports.deleteUser = factory.deleteOne(User);
