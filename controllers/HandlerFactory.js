@@ -55,7 +55,7 @@ exports.getAll = (Model) =>
 
     const features = new APIFeatures(Model.find(filter), req.query);
     features.filter().sort().limitFields().paginate();
-    const allDocs = await features.query;
+    const allDocs = await features.query; //.explain(); - query metadata
 
     res.status(200).json({
       status: 'success',
