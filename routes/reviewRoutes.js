@@ -8,11 +8,14 @@ const router = express.Router({ mergeParams: true });
 // routes
 
 // protect all routes from unauthorized users
-router.route(authenticationController.protect);
+router.use(authenticationController.protect);
 
-router
-  .route('/createReview')
-  .post(authenticationController.restrictTo('user'), reviewController.setTourAndUserIds, reviewController.createReview);
+router.route('/createReview').post(
+  // authenticationController.protect,
+  authenticationController.restrictTo('user'),
+  reviewController.setTourAndUserIds,
+  reviewController.createReview,
+);
 router.route('/').get(reviewController.getAllReviews);
 router
   .route('/:id')
