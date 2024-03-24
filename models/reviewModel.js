@@ -62,6 +62,10 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
 };
 
 /////////////////////////
+// tour and user field combination should be unique (same user can review the same tour only once)
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
+/////////////////////////
 // caclulating average ratings every time review document created
 reviewSchema.post('save', function (document, next) {
   this.constructor.calcAverageRatings(this.tour);
