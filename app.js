@@ -16,7 +16,7 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-// use pug templates, specifying location of the templates
+// use pug templates, specifying root location for the view engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
 

@@ -6,6 +6,6 @@ const router = express.Router();
 ////////////////////////////////////////////////////////////////
 // routes pug
 router.get('/', viewController.getOverview);
-router.get('/tour', viewController.getTourview);
+router.get('/tour/:slug', viewController.getTourview);
 
 module.exports = router;
