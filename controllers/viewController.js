@@ -18,5 +18,5 @@ exports.getTourview = catchAsync(async (req, res) => {
   console.log(tour);
   // build template
   // render that template using tour data
-  res.status(200).render('tour', { title: 'The forest hiker tour', tour });
+  res.status(200).render('tour', { title: `${tour.name} tour`, tour });
 });
