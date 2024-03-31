@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -27,7 +28,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 // global middleware
 
 // security HTTP headers
-const scriptSrcUrls = ['https://api.tiles.mapbox.com/', 'https://api.mapbox.com/'];
+const scriptSrcUrls = ['https://api.tiles.mapbox.com/', 'https://api.mapbox.com/', 'https://cdnjs.cloudflare.com/'];
 const styleSrcUrls = ['https://api.mapbox.com/', 'https://api.tiles.mapbox.com/', 'https://fonts.googleapis.com/'];
 const connectSrcUrls = [
   'https://api.mapbox.com/',
@@ -61,6 +62,7 @@ app.use('/api', limiter); // will allow 100 req from the same IP in 1 hour
 
 // body parser
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -74,11 +76,11 @@ app.use(hpp({ whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'maxG
 // dev logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-// test middleware
+// logging req time, cookies
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   console.log(req.requestTime);
-  // console.log(req.headers);
+  console.log(req.cookies);
   next();
 });
 
