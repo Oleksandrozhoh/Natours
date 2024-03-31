@@ -10,7 +10,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   res.status(200).render('overview', { title: 'All tours', tours });
 });
 
-exports.getTourview = catchAsync(async (req, res) => {
+exports.getTourview = catchAsync(async (req, res, next) => {
   // get tour data
   const tour = (
     await Tour.find({ slug: req.params.slug }).populate({ path: 'reviews', fields: 'review rating user' })
@@ -20,3 +20,9 @@ exports.getTourview = catchAsync(async (req, res) => {
   // render that template using tour data
   res.status(200).render('tour', { title: `${tour.name} tour`, tour });
 });
+
+exports.getLoginForm = (req, res) => {
+  // build template
+  // render that template using tour data
+  res.status(200).render('login', { title: 'Log into your account' });
+};
