@@ -27,7 +27,11 @@ app.use(express.static(path.join(__dirname, '/public')));
 // global middleware
 
 // security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 // set the rate limit
 const limiter = rateLimit({
