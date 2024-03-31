@@ -6,6 +6,8 @@ const router = express.Router();
 
 ////////////////////////////////////////////////////////////////
 // routes pug
+router.use(authenticationController.isLoggedIn);
+
 router.get('/', viewController.getOverview);
 router.get('/tour/:slug', authenticationController.protect, viewController.getTourview);
 
