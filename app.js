@@ -31,6 +31,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 const scriptSrcUrls = ['https://api.tiles.mapbox.com/', 'https://api.mapbox.com/', 'https://cdnjs.cloudflare.com/'];
 const styleSrcUrls = ['https://api.mapbox.com/', 'https://api.tiles.mapbox.com/', 'https://fonts.googleapis.com/'];
 const connectSrcUrls = [
+  'ws://127.0.0.1:65431/',
   'https://api.mapbox.com/',
   'https://a.tiles.mapbox.com/',
   'https://b.tiles.mapbox.com/',

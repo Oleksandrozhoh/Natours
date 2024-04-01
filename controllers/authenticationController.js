@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
@@ -62,6 +64,14 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendTocken(user, 200, res);
 });
 
+exports.logout = (req, res, next) => {
+  res.cookie('jwt', 'loggedOut', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // get the jwt token and check if it exist in header or in cookies
   let token = '';
@@ -90,24 +100,28 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // only for rendered pages to check if the user is logged in
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  // if user logged in
-  if (req.cookies.jwt) {
-    // verification token ( check if the token payload wasnt manipulated )
-    const tokenData = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+exports.isLoggedIn = async (req, res, next) => {
+  try {
+    // if user logged in
+    if (req.cookies.jwt) {
+      // verification token ( check if the token payload wasnt manipulated )
+      const tokenData = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
 
-    // check if user still exists
-    const currentUser = await User.findById(tokenData.id);
-    if (!currentUser) return next();
+      // check if user still exists
+      const currentUser = await User.findById(tokenData.id);
+      if (!currentUser) return next();
 
-    // check if user changed password after jwt was issued
-    if (currentUser.changePasswordAfter(tokenData.iat)) return next();
+      // check if user changed password after jwt was issued
+      if (currentUser.changePasswordAfter(tokenData.iat)) return next();
 
-    // user is logged in
-    res.locals.user = currentUser;
+      // user is logged in
+      res.locals.user = currentUser;
+    }
+    return next();
+  } catch (err) {
+    return next();
   }
-  next();
-});
+};
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
