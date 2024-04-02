@@ -2,32 +2,47 @@ const AppError = require('../utils/appError');
 
 /////////////////////////////////////////////
 // error helper functions
-const sendErrorDev = (res, err) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
+const sendErrorDev = (req, res, err) => {
+  // API response
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+
+  // BROWSER response
+  console.log('Error 😮😮😮 :', err);
+  return res.status(err.statusCode).render('error', { title: 'Something went wrong!', msg: err.message });
 };
 
-const sendErrorProd = (res, err) => {
-  // opperational error that we understand
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
+const sendErrorProd = (req, res, err) => {
+  // API response
+  if (req.originalUrl.startsWith('/api')) {
+    // opperational - trusted error
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+
     // unknown error
-  } else {
-    // logging error
     console.log('Error 😮😮😮 :', err);
     // send generic message for the client
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Something went wrong',
     });
   }
+
+  // BROWSER response
+  if (err.isOperational) {
+    return res.status(err.statusCode).render('error', { title: 'Something went wrong!', msg: err.message });
+  }
+  return res.status(err.statusCode).render('error', { title: 'Something went wrong!', msg: 'Please try again later' });
 };
 
 const handleCastErrorDB = (err) => {
@@ -64,14 +79,15 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(res, err);
+    sendErrorDev(req, res, err);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (err.name === 'ValidationError') error = handleValidationErrors(error);
     if (err.name === 'JsonWebTokenError') error = handleJWTErrors();
     if (err.name === 'TokenExpiredError') error = handleExpiredTokenErrors();
-    sendErrorProd(res, error);
+    sendErrorProd(req, res, error);
   }
 };
