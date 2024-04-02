@@ -6,11 +6,9 @@ const router = express.Router();
 
 ////////////////////////////////////////////////////////////////
 // routes pug
-router.use(authenticationController.isLoggedIn);
-
-router.get('/', viewController.getOverview);
+router.get('/', authenticationController.isLoggedIn, viewController.getOverview);
+router.get('/login', authenticationController.isLoggedIn, viewController.getLoginForm);
 router.get('/tour/:slug', authenticationController.protect, viewController.getTourview);
-
-router.get('/login', viewController.getLoginForm);
+router.get('/me', authenticationController.protect, viewController.getAccount);
 
 module.exports = router;

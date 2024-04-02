@@ -96,6 +96,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // proceed to the next middleware (Grant access to protected route)
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
