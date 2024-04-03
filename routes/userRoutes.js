@@ -15,7 +15,7 @@ router.route('/resetPassword/:token').patch(authenticationController.resetPasswo
 router.route('/updateMyPassword').patch(authenticationController.protect, authenticationController.updatePassword);
 
 // protect every route below from unauthenticated users
-router.route(authenticationController.protect);
+router.use(authenticationController.protect);
 
 router.route('/updateMe').patch(userController.updateMe);
 router.route('/deleteMe').delete(userController.deleteMe);
