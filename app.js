@@ -64,6 +64,7 @@ app.use('/api', limiter); // will allow 100 req from the same IP in 1 hour
 // body parser
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); // parse form data
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -80,8 +81,8 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // logging req time, cookies
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.requestTime);
-  console.log(req.cookies);
+  // console.log(req.requestTime);
+  // console.log(req.cookies);
   next();
 });
 

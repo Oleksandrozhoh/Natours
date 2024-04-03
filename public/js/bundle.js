@@ -12251,7 +12251,7 @@ var _mapbox = require("./mapbox");
 /* eslint-disable */
 
 // elements
-var form = document.querySelector('.form');
+var form = document.querySelector('.form--login');
 var map = document.getElementById('map');
 var btnLogout = document.querySelector('.nav__el--logout');
 
