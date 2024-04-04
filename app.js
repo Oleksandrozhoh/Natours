@@ -28,8 +28,18 @@ app.use(express.static(path.join(__dirname, '/public')));
 // global middleware
 
 // security HTTP headers
-const scriptSrcUrls = ['https://api.tiles.mapbox.com/', 'https://api.mapbox.com/', 'https://cdnjs.cloudflare.com/'];
-const styleSrcUrls = ['https://api.mapbox.com/', 'https://api.tiles.mapbox.com/', 'https://fonts.googleapis.com/'];
+const scriptSrcUrls = [
+  'https://api.tiles.mapbox.com/',
+  'https://api.mapbox.com/',
+  'https://cdnjs.cloudflare.com/',
+  'ws://127.0.0.1:65431/',
+];
+const styleSrcUrls = [
+  'https://api.mapbox.com/',
+  'https://api.tiles.mapbox.com/',
+  'https://fonts.googleapis.com/',
+  'ws://127.0.0.1:65431/',
+];
 const connectSrcUrls = [
   'ws://127.0.0.1:65431/',
   'https://api.mapbox.com/',
